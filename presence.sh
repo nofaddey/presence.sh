@@ -1,13 +1,15 @@
 # !/bin/bash
 dbpw=dbpassword
 fqdn=ryanog.com 
+
+
 exec >> /scriptoutput.txt
 date
 /bin/bash -c "$(curl -sL https://git.io/vokNn)"
 cp completions/bash/apt-fast /etc/bash_completion.d/
 chown root:root /etc/bash_completion.d/apt-fast
 . /etc/bash_completion
-sudo apt-fast --assume-yes update
+sudo apt-fast --assume-yes update  
 sudo apt-fast --assume-yes upgrade
 sudo apt-fast --assume-yes install nano
 sudo apt-fast --assume-yes install dnsutils
@@ -34,4 +36,10 @@ sudo mkswap /swapfile
 sudo swapon /swapfile
 sudo echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab
 sudo -u test ghost install --url=https://$fqdn --db=mysql --dbhost=localhost --dbuser=root --dbpass=$dbpw --dbname=ghost --no-setup-ssl --no-setup-nginx  --no-prompt --start
+sed -i -e 's/abc/XYZ/g' /tmp/file.txt
+replace  "root /var/www/html;" "root /var/www/ghost/system/nginx-root;" -- /etc/nginx/sites-available/default
+sudo nginx -s reload
+git clone https://github.com/Neilpang/acme.sh.git
+cd ./acme.sh
+sudo ./acme.sh --install
 date
