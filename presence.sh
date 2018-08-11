@@ -7,6 +7,8 @@ gdns@username=
 gdns@password=
 gdnswwwusername=
 gdnswwwpassword=
+newuser=
+newuserpassword=
 exec >> /scriptoutput.txt
 date
 /bin/bash -c "$(curl -sL https://git.io/vokNn)"
@@ -18,8 +20,8 @@ sudo apt-fast --assume-yes upgrade
 sudo apt-fast --assume-yes install nano
 sudo apt-fast --assume-yes install dnsutils
 sudo apt-fast --assume-yes install git
-sudo debconf-set-selections <<< "mysql-server mysql-server/root_password password test"
-sudo debconf-set-selections <<< "mysql-server mysql-server/root_password_again password test"
+sudo debconf-set-selections <<< "mysql-server mysql-server/root_password password ${dbpw}"
+sudo debconf-set-selections <<< "mysql-server mysql-server/root_password_again password ${dbpw}"
 sudo apt-fast -y install mysql-server
 sudo apt-fast -y install nginx
 curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash
@@ -32,17 +34,17 @@ sudo apt-fast install ufw
 sudo ufw allow 'Nginx Full'
 sudo ufw allow ssh
 sudo ufw enable
-sudo adduser test --gecos "First Last,RoomNumber,WorkPhone,HomePhone" --disabled-password
-echo "test:test" | sudo chpasswd
-sudo usermod -aG sudo test
-sudo mkdir -p /var/www/ghost && sudo chown test:test /var/www/ghost
+sudo adduser $newuser --gecos "First Last,RoomNumber,WorkPhone,HomePhone" --disabled-password
+echo "${newuser}:${newuserpassword}" | sudo chpasswd
+sudo usermod -aG sudo $newuser
+sudo mkdir -p /var/www/ghost && sudo chown $newuser:$newuser /var/www/ghost
 cd /var/www/ghost
 sudo fallocate -l 2G /swapfile
 sudo chmod 600 /swapfile
 sudo mkswap /swapfile
 sudo swapon /swapfile
 sudo echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab
-sudo -u test ghost install --url=https://$fqdn --db=mysql --dbhost=localhost --dbuser=root --dbpass=$dbpw --dbname=ghost --no-setup-ssl --no-setup-nginx  --no-prompt --start
+sudo -u $newuser ghost install --url=https://$fqdn --db=mysql --dbhost=localhost --dbuser=root --dbpass=$dbpw --dbname=ghost --no-setup-ssl --no-setup-nginx  --no-prompt --start
 sed -i -e 's/abc/XYZ/g' /tmp/file.txt
 replace  "root /var/www/html;" "root /var/www/ghost/system/nginx-root;" -- /etc/nginx/sites-available/default
 sudo nginx -s reload
