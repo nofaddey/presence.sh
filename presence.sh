@@ -1,8 +1,12 @@
 # !/bin/bash
 dbpw=dbpassword
 fqdn=ryanog.com 
-
-
+email=mail@ryanog.com
+ip=$(curl ifconfig.co)
+gdns@username=
+gdns@password=
+gdnswwwusername=
+gdnswwwpassword=
 exec >> /scriptoutput.txt
 date
 /bin/bash -c "$(curl -sL https://git.io/vokNn)"
@@ -20,6 +24,9 @@ sudo apt-fast -y install mysql-server
 sudo apt-fast -y install nginx
 curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash
 sudo apt-fast install -y nodejs
+sudo npm -g install google-dynamic-dns
+gddns --username=$gdns@username --password=$gdns@password --hostname=@.$fqdn
+gddns --username=$gdnswwwusername --password=$gdnswwwpassword --hostname=@.$fqdn
 sudo npm i -g ghost-cli
 sudo apt-fast install ufw
 sudo ufw allow 'Nginx Full'
@@ -39,7 +46,8 @@ sudo -u test ghost install --url=https://$fqdn --db=mysql --dbhost=localhost --d
 sed -i -e 's/abc/XYZ/g' /tmp/file.txt
 replace  "root /var/www/html;" "root /var/www/ghost/system/nginx-root;" -- /etc/nginx/sites-available/default
 sudo nginx -s reload
-git clone https://github.com/Neilpang/acme.sh.git
+sudo git clone https://github.com/Neilpang/acme.sh.git
 cd ./acme.sh
-sudo ./acme.sh --install
+sudo ./acme.sh --install --home /etc/letsencrypt/ --accountemail $email
+sudo /etc/letsencrypt/acme.sh --issue --home /etc/letsencrypt -d www.$fqdn -d $fqdn -w /var/www/ghost/system/nginx-root --accountemail $email
 date
