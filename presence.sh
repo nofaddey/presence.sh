@@ -51,5 +51,12 @@ sudo nginx -s reload
 sudo git clone https://github.com/Neilpang/acme.sh.git
 cd ./acme.sh
 sudo ./acme.sh --install --home /etc/letsencrypt/ --accountemail $email
+ipcheck=$(dig +short $fqdn)
+if [[ $ipcheck = $ip ]]; then 
+echo 'Valid ip' $ipcheck
+else
+echo 'You need to insert the IP below as an A record' 
+$ip
 sudo /etc/letsencrypt/acme.sh --issue --home /etc/letsencrypt -d www.$fqdn -d $fqdn -w /var/www/ghost/system/nginx-root --accountemail $email
+
 date
